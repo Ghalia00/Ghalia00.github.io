@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Nyhet-prosjekt</title>
+
+            <style>
+
+
+                /*list-style-type,  border: 1px solid black,     border-collapse: collapse, fjerner melomrom mellom tabeller
+                font-weight: bold,     a: hover{ color: blue }      text-decoration: none      display: block/grid
+
+
+                Flytte opp stortinget, referere til hver enkelte side - kopiere alt database og kopiere fra firebase og sette i de andre*/
+
+                * { box-sizing: border-box; }
+
+             body{
+                 min-height: 120vh;
+                 background-color: white;
+                 font-family:"Times New Roman";
+                 text-align: center;
+                 background-image: url("bilder/nyheter.jpg");
+                 background-repeat: no-repeat;
+                 background-position: center;
+             }
+
+
+                .drop {
+                    display: inline-block;
+                    background-color: #eeeeee;
+                    margin: 5px;
+                    color: #3e90ff;
+                    font-weight: bold;
+                    font-size: 25px;
+
+                    border-radius: 5px;
+                    padding: 17px;
+                    position: relative;
+                }
+                .drop:hover {
+                    background-color: whitesmoke;
+
+                }
+
+
+                #sistenytt > article {
+
+                }
+
+                #sistenytt > article > a {
+                    text-decoration: none;
+                    font-size: 23px;
+                    color: black;
+                }
+               /* #sistenytt:hover > article > a {
+                    color: #565656;
+                }*/
+
+                .drop > div {
+                    cursor: pointer;
+                }
+
+                .drop > ul {
+                    position: absolute;
+                    display: none;
+                    background-color: #eeeeee;
+                    top: 23px;
+                    left: 0;
+                    right: 0px;
+                    padding: 10px;
+                    font-size: 20px;
+                    list-style: none;
+                }
+
+                .drop > ul  a  {
+                    text-decoration: none;
+                    color: #1e90ff;
+                }
+
+                .drop:hover > ul{
+                    display: block;
+                }
+
+                .drop  a {
+                    color: #1e90ff;
+                    text-decoration: none;
+                }
+
+                .sistenytt {
+                    /*background-color: rgba(30, 144, 255, 0.3);*/
+                    min-height: 400px;
+                    width: 800px;
+                    margin: auto;
+                    padding: 30px;
+                    border-radius: 20px;
+                    font-size: 20px;
+                    color: black;
+                }
+
+
+                main {
+                    display: grid;
+                    grid-template-columns: auto 1fr auto;
+                }
+
+                .sistenytt > article {
+                    background-color: rgba(255, 255, 255, 0.8);
+                    padding: 10px;
+
+                }
+
+                .sistenytt > article > a {
+                    color: #333;
+                }
+
+
+                .grid {
+                    display: grid;
+                    grid-template-rows: 1fr 1fr 1fr;
+                    grid-gap: 2px;
+                }
+
+            </style>
+
+</head>
+<body>
+
+       <div class="drop">
+               <a href="Sport.html">Sport</a>
+       </div>
+
+
+
+       <div class="drop">
+               <a href="Utenriks.html">Utenriks</a>
+       </div>
+
+
+        <div class="drop"> <a href="Stortinget.html">Stortinget</a> </div>
+
+        <div class="drop"> <a href="Norge.html">Norge</a> </div>
+
+
+        <main>
+            <section class="grid">
+                <img src="bilder/norgeflaggliten.jpg">
+                <img  src="bilder/EU.jpg">
+                <img src="bilder/Erna taler.jpg">
+            </section>
+            <div id="sistenytt" class="sistenytt"></div>
+            <section class="grid">
+                <img src="bilder/fotbalkamp.jpg">
+                <img src="bilder/litenstorting.jpg">
+                <img src="bilder/makt.jpg">
+            </section>
+
+        </main>
+
+
+
+       <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+       <script>
+           // Initialize Firebase
+           var config = {
+               apiKey: "AIzaSyCRLKviFWqCJOlTwTIBx_YhKmu7zU3NUmY",
+               authDomain: "database21-76cd4.firebaseapp.com",
+               databaseURL: "https://database21-76cd4.firebaseio.com",
+               projectId: "database21-76cd4",
+               storageBucket: "database21-76cd4.appspot.com",
+               messagingSenderId: "629265520578"
+           };
+           firebase.initializeApp(config);
+       </script>
+
+
+       <script>
+               let database = firebase.database();
+               let sportsnyheter = database.ref("sportsnyheter");
+
+               const sistenytt = document.getElementById("sistenytt");
+
+
+
+               function visNyhet(snapshot){
+                    let nyhet = snapshot.val();
+                    sistenytt.innerHTML += `
+                        <article>
+                            <a href="${nyhet.link}">${nyhet.overskrift}</a>
+                        </article>
+                    `;
+               }
+
+
+               sportsnyheter
+                    .orderByChild("time")
+                    .limitToFirst(5)
+                    .on("child_added", visNyhet);
+
+               utenriksnyheter
+                   .orderByChild("time")
+                   .limitToFirst(5)
+                   .on("child_added", visNyhet);
+
+               norge
+                   .orderByChild("time")
+                   .limitToFirst(5)
+                   .on("child_added", visNyhet);
+
+               stortinget
+                   .orderByChild("time")
+                   .limitToFirst(5)
+                   .on("child_added", visNyhet);
+
+
+       </script>
+
+
+</body>
+</html>
