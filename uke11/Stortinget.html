@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="no">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Stortinget</title>
+
+    <style>
+
+        header > div > a {
+            background-color: ;
+            padding:  18px;
+        }
+
+        body {
+            background-image: url("bilder/stortingetmindre.jpg");
+            background-repeat: no-repeat;
+            background-position: center;
+            padding: 0px 0px 250px 0px;
+            item-align: center;
+        }
+
+        h1{
+            text-align: center;
+            /*color:#485d8b;*/
+        }
+
+        h2 {
+            left: 50px;
+        }
+
+        a{
+            text-decoration: none;
+            color: black;  /*#5533dd;*/
+            font-size: 20px;
+            margin: auto;
+        }
+
+        header > div {
+
+        }
+
+        main > div {
+            background-color: rgba(256, 256, 256, 0.5);            /* rgba(72, 93, 139, 0.8);*/
+            margin: auto;
+            padding: 150px;
+            width: 600px;
+
+        }
+
+        .kolonne {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            background-color: whitesmoke;
+            border: 2px solid black;
+        }
+
+
+        .navn {
+            margin: 0px;
+        }
+
+        .link {
+            background-color: cornflowerblue;
+            border: 2px solid black;
+        }
+
+        skjema {
+
+        }
+
+        #txtMeldinger {
+            margin-top: 30px;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<header>
+
+    <div>
+    <a href="Database prosjekt.html">Forsiden </a>
+    </div>
+
+    <div>
+        <h1>Stortinget</h1>  <br><br>
+    </div>
+</header>
+
+<main>
+
+    <div>
+
+        <form id="skjema">
+            <input type="text" id="inpNavn" required placeholder="Oversriften">
+            <input type="text" id="inpLink" required placeholder="Linken">
+            <button type="submit" class="button">Lagre</button>
+        </form>
+
+        <article id="txtMeldinger">
+            <section id="ulNyheter">
+
+            </section>
+        </article>
+
+        <script src="moment.min.js"></script>
+
+        <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>     <!--Avsender - Navn,   Mening - Link-->
+        <script>
+            // Initialize Firebase
+            var config = {
+                apiKey: "AIzaSyCRLKviFWqCJOlTwTIBx_YhKmu7zU3NUmY",
+                authDomain: "database21-76cd4.firebaseapp.com",
+                databaseURL: "https://database21-76cd4.firebaseio.com",
+                projectId: "database21-76cd4",
+                storageBucket: "database21-76cd4.appspot.com",
+                messagingSenderId: "629265520578"
+            };
+            firebase.initializeApp(config);
+        </script>
+
+        <script>
+            let database = firebase.database();
+            let stortinget = database.ref("stortinget");
+            let skjema = document.getElementById("skjema");
+            let inpNavn = document.getElementById("inpNavn");
+            let inpLink = document.getElementById("inpLink");
+            let txtMeldinger = document.getElementById("txtMeldinger");
+            let ulNyheter = document.getElementById("ulNyheter");
+            function visNyhet(snapshot) {
+                let nyhet = snapshot.val();
+                let nyhetTekst = `
+                    <div class="kolonne">
+                        <div class="navn">
+                            <a href="${nyhet.link}">${nyhet.overskrift}</a>
+                        </div>
+                        <div class="link">
+                            <p>${moment(new Date(nyhet.time)).format("MMM Do YY")}</p>
+                        </div>
+                    </div>
+                `;
+
+                ulNyheter.innerHTML += nyhetTekst;
+            }
+            function regNyhet(evt){
+                evt.preventDefault();
+                var nyNyhet = {
+                    overskrift: inpNavn.value,
+                    link :inpLink.value,
+                    time: firebase.database.ServerValue.TIMESTAMP
+                };
+                stortinget.push(nyNyhet);
+                skjema.reset();
+            }
+            stortinget.on("child_added", visNyhet);
+            skjema.onsubmit = regNyhet;
+        </script>
+
+
+
+    </div>
+
+</main>
+
+</body>
+
+</html>
